@@ -1,6 +1,7 @@
 import csv
 import glob
 import logging
+import json
 import os
 import pathlib
 import unittest
@@ -33,6 +34,7 @@ class TestResult(unittest.TextTestResult):
 
 class TestCase(unittest.TestCase):
     log_file = None
+    json_log_file = None
     max_examples = -1
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
@@ -47,6 +49,13 @@ class TestCase(unittest.TestCase):
     def _assertTrue(self, result: bool, description: str, short_message: str, full_message: str):
         if not result:
             self._log_failure(description, full_message)
+            if self.json_log_file:
+                with open(self.json_log_file, "w+") as fp:
+                    fp.write(json.dumps({
+                        "class": self.__class__.__name__,
+                        "description": description,
+                        "full_message": full_message,
+                    }) + "\n")
         self.assertTrue(result, short_message)
 
     def _log_failure(self, description: str, message: str):

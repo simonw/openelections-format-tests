@@ -11,13 +11,18 @@ if __name__ == "__main__":
                              "endgroup workflow commands")
     parser.add_argument("--log-file", type=str, help="the absolute path to a file that the full failure messages will "
                                                      "be written to")
+    parser.add_argument("--json-log-file", type=str, help="the absolute path to a file to log detailed JSON failures")
     parser.add_argument("--max-examples", type=int, default=10, metavar="N",
                         help="the maximum number of failing rows to print to the console. If a negative value is "
                              "provided, all failures will be printed.")
+    # parser.add_argument("--log", type=int, default=10, metavar="N",
+    #                     help="the maximum number of failing rows to print to the console. If a negative value is "
+    #                          "provided, all failures will be printed.")
     args = parser.parse_args()
 
     TestCase.root_path = args.root_path
     TestCase.log_file = args.log_file
+    TestCase.json_log_file = args.json_log_file
     TestCase.max_examples = args.max_examples
 
     result_class = TestResult if args.group_failures else None

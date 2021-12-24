@@ -191,10 +191,14 @@ class InconsistentNumberOfColumns(RowTest):
     def passed(self):
         return len(self.__failures) == 0
 
+    @property
+    def message(self):
+        return f"Header has {len(self.__headers)} entries, but there are {len(self.__failures)} " \
+            f"rows with an inconsistent number of columns:\n\n" \
+            f"\tHeaders ({len(self.__headers)} entries): {self.__headers}:"
+
     def get_failure_message(self, max_examples=-1):
-        message = f"Header has {len(self.__headers)} entries, but there are {len(self.__failures)} " \
-                  f"rows with an inconsistent number of columns:\n\n" \
-                  f"\tHeaders ({len(self.__headers)} entries): {self.__headers}:"
+        message = self.message
 
         count = 0
         for key, value in self.__failures.items():
@@ -206,6 +210,13 @@ class InconsistentNumberOfColumns(RowTest):
                 count += 1
 
         return message
+
+    def get_failure_json(self):
+        return {
+            "class": self.__class__.__name__,
+            "message": self.message,
+            "rows": self.__failures
+        }
 
     def _test_row(self, row: list[str]):
         if len(row) != len(self.__headers):
